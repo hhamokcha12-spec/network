@@ -1,0 +1,6 @@
+{
+  "name": "Nmap Network Scanner",
+  "description": "A professional Android network security scanning application leveraging native binaries and real-time output parsing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
