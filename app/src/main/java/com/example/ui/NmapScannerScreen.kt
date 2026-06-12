@@ -79,6 +79,7 @@ fun NmapScannerScreen(
     val isScanning by viewModel.isScanning.collectAsStateWithLifecycle()
     val consoleLogs by viewModel.consoleLogs.collectAsStateWithLifecycle()
     val discoveredPorts by viewModel.discoveredPorts.collectAsStateWithLifecycle()
+    val intelligenceConsensus by viewModel.intelligenceConsensus.collectAsStateWithLifecycle()
     val statusText by viewModel.statusText.collectAsStateWithLifecycle()
     val isSimulationMode by viewModel.isSimulationMode.collectAsStateWithLifecycle()
     val scanHistory by viewModel.scanHistory.collectAsStateWithLifecycle()
@@ -274,6 +275,7 @@ fun NmapScannerScreen(
                         isScanning = isScanning,
                         consoleLogs = consoleLogs,
                         discoveredPorts = discoveredPorts,
+                        intelligenceConsensus = intelligenceConsensus,
                         statusText = statusText,
                         isSimulationMode = isSimulationMode,
                         activeTool = activeTool,
@@ -516,6 +518,7 @@ fun ScannerDeckTab(
     isScanning: Boolean,
     consoleLogs: List<String>,
     discoveredPorts: List<ScanPort>,
+    intelligenceConsensus: List<com.example.service.IntelligenceConsensus>,
     statusText: String,
     isSimulationMode: Boolean,
     activeTool: String,
@@ -1497,6 +1500,41 @@ fun ScannerDeckTab(
                                 }
 
                                 Divider(color = sleekBorder, modifier = Modifier.padding(vertical = 2.dp))
+
+                                val nodeConsensus = intelligenceConsensus.find { it.port.portNumber == port.portNumber }
+                                if (nodeConsensus != null) {
+                                    // TRUTH ENGINE & BEHAVIORAL IDENTITY
+                                    Column(verticalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
+                                        Text(
+                                            text = "NETWORK TRUTH ENGINE & IDENTITY (محرك الحقيقة والهوية):",
+                                            fontSize = 8.5.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = sleekPrimary
+                                        )
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+                                            Column(verticalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.weight(1f)) {
+                                                Text(text = "Signature: ${nodeConsensus.behavioralIdentity.signatureId}", fontSize = 8.sp, color = sleekTextMain, fontFamily = FontFamily.Monospace)
+                                                Text(text = "Inferrence: ${nodeConsensus.behavioralIdentity.deviceType}", fontSize = 8.sp, color = sleekTextSecondary, fontFamily = FontFamily.Monospace)
+                                                Text(text = "TCP Window: ${nodeConsensus.behavioralIdentity.tcpWindowSize}", fontSize = 8.sp, color = sleekTextSecondary, fontFamily = FontFamily.Monospace)
+                                            }
+                                            Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.weight(1f)) {
+                                                val confColor = if (nodeConsensus.confidenceScore > 0.7) colorSuccessGreen else colorAlertRed
+                                                Text(
+                                                    text = "Confidence Score: ${(nodeConsensus.confidenceScore * 100).toInt()}%", 
+                                                    fontSize = 8.5.sp, 
+                                                    fontWeight = FontWeight.Bold, 
+                                                    color = confColor
+                                                )
+                                                Text(text = "Sources: ${nodeConsensus.validationSources.joinToString(" + ")}", fontSize = 8.sp, color = sleekTextSecondary, fontFamily = FontFamily.Monospace)
+                                            }
+                                        }
+                                    }
+                                    
+                                    Divider(color = sleekBorder, modifier = Modifier.padding(vertical = 2.dp))
+                                }
 
                                 // 5. Attack Path Simulation (Visual Map chain)
                                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
